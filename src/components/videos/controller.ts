@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import response from '@/utils/response';
+import response from '../../utils/response';
 import VideosService from './services';
 
 const search = async (req: Request, res: Response) => {
