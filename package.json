@@ -1,0 +1,35 @@
+{
+  "name": "music-hive-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "scripts": "node src/scripts/index.js",
+    "dev": "nodemon -r tsconfig-paths/register src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
+    "module-alias": "^2.2.3",
+    "playwright": "^1.47.2",
+    "tsconfig-paths": "^4.2.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.4",
+    "dotenv": "16.4.5",
+    "nodemon": "3.1.7",
+    "pre-commit": "1.2.2",
+    "prettier": "3.3.3",
+    "ts-node": "10.9.2",
+    "typescript": "5.6.2"
+  },
+  "_moduleAliases": {
+    "@": "src"
+  }
+}
