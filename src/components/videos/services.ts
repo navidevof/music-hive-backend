@@ -1,6 +1,6 @@
-import { db } from '@/firebase';
+import { db } from '../../firebase';
 import { ISearchVideo, IVideo } from '../../interfaces/video';
-import { COLLECTIONS } from '@/utils/constants';
+import { COLLECTIONS } from '../../utils/constants';
 
 const VideosService = () => {
   const search = async (q: string) => {
