@@ -89,48 +89,6 @@ const joinEvent = async (req: Request, res: Response) => {
   }
 };
 
-const addVideoToPlaylist = async (req: Request, res: Response) => {
-  try {
-    const result = EventsSchema.validateAddVideoToPlaylist(req.body);
-    if (result.error) {
-      return response({
-        res,
-        status: 400,
-        error: true,
-        message: result.error.errors[0].message,
-      });
-    }
-
-    const video = {
-      image: result.data.image,
-      title: result.data.title,
-      userName: result.data.userName,
-      videoId: result.data.videoId,
-    };
-
-    await EventsServices().addVideoToPlaylist({ eventId: result.data.eventId, video });
-    const playlists = await EventsServices().getPlaylistByEvent({ eventId: result.data.eventId });
-
-    req.io.to(result.data.eventId).emit('updatePlaylists', playlists);
-
-    return response({
-      res,
-      status: 200,
-      error: false,
-      body: playlists,
-      message: 'ok',
-    });
-  } catch (error) {
-    console.log({ error });
-    return response({
-      res,
-      status: 500,
-      error: true,
-      message: 'Error al agregar video a la lista de reproducción.',
-    });
-  }
-};
-
 const getPlaylistByEvent = async (req: Request, res: Response) => {
   try {
     const result = EventsSchema.validateEvent(req.params);
@@ -175,7 +133,7 @@ const getPlaylistByEvent = async (req: Request, res: Response) => {
 
 const leaveEvent = async (req: Request, res: Response) => {
   try {
-    const result = EventsSchema.validateEvent(req.params);
+    const result = EventsSchema.validateEvent(req.body);
     if (result.error) {
       return response({
         res,
@@ -187,7 +145,8 @@ const leaveEvent = async (req: Request, res: Response) => {
 
     await EventsServices().removeEvent({ eventId: result.data.eventId });
 
-    req.io.to(result.data.eventId).emit('closeEvent');
+    req.io.to(result.data.eventId).emit('closeEvent', result.data.eventId);
+    req.io.to(result.data.eventId).disconnectSockets(true);
 
     return response({
       res,
@@ -211,7 +170,6 @@ const eventsController = {
   createEvent,
   joinEvent,
   getPlaylistByEvent,
-  addVideoToPlaylist,
   leaveEvent,
 };
 

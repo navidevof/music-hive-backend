@@ -8,8 +8,6 @@ router.get('/:eventId/playlists', eventsController.getPlaylistByEvent);
 
 router.post('/create', authorization, eventsController.createEvent);
 router.post('/join', eventsController.joinEvent);
-router.post('/leave', eventsController.leaveEvent);
-
-router.patch('/add-video-to-playlist', eventsController.addVideoToPlaylist);
+router.post('/leave', authorization, eventsController.leaveEvent);
 
 export default router;

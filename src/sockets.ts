@@ -7,6 +7,8 @@ const sockets = (io: Server) => {
     socket.on('joinEvent', (eventId: string) => {
       socket.join(eventId);
       console.log(`Socket ${socket.id} se unió al evento ${eventId}`);
+      const participants = io.sockets.adapter.rooms.get(eventId)?.size ?? 1;
+      io.in(eventId).emit('participants', participants);
     });
 
     socket.on('updateCurrentVideo', ({ eventId, videoId }: { eventId: string; videoId: string }) => {
@@ -16,6 +18,8 @@ const sockets = (io: Server) => {
     socket.on('leaveEvent', (eventId: string) => {
       socket.leave(eventId);
       console.log(`Cliente ha salido del evento: ${eventId}`);
+      const participants = io.sockets.adapter.rooms.get(eventId)?.size ?? 1;
+      io.in(eventId).emit('participants', participants);
     });
 
     socket.on('disconnect', () => {

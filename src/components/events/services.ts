@@ -26,17 +26,6 @@ const EventsServices = () => {
     return event.data() as IEvent;
   };
 
-  const addVideoToPlaylist = async ({ eventId, video }: { eventId: string; video: IVideo }) => {
-    await db
-      .collection(COLLECTIONS.EVENTS)
-      .doc(eventId)
-      .collection(COLLECTIONS.PLAYLISTS)
-      .add({
-        ...video,
-        createdAt: Date.now(),
-      });
-  };
-
   const getPlaylistByEvent = async ({ eventId }: { eventId: string }) => {
     const playlist = await db
       .collection(COLLECTIONS.EVENTS)
@@ -49,18 +38,13 @@ const EventsServices = () => {
   };
 
   const removeEvent = async ({ eventId }: { eventId: string }) => {
-    const batch = db.batch();
-
-    batch.delete(db.collection(COLLECTIONS.EVENTS).doc(eventId));
-
-    await batch.commit();
+    await db.recursiveDelete(db.collection(COLLECTIONS.EVENTS).doc(eventId));
   };
 
   return {
     createEvent,
     getEvent,
     getPlaylistByEvent,
-    addVideoToPlaylist,
     removeEvent,
   };
 };
