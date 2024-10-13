@@ -9,7 +9,7 @@ import { addSocketIOMiddleware } from './middlewares/socketIo';
 import { Server } from 'socket.io';
 import sockets from './sockets';
 
-const whitelist = ['/'];
+const whitelist = ['https://music-hive.vercel.app', '/'];
 
 const options: cors.CorsOptions = {
   origin: whitelist,
