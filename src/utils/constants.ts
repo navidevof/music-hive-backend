@@ -1,2 +1,5 @@
 //COLLECTIONS NAMES
-export const statsCollection = '--stats--';
+export const COLLECTIONS = {
+  EVENTS: 'events',
+  PLAYLISTS: 'playlists',
+};

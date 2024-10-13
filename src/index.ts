@@ -5,6 +5,9 @@ import express, { Application } from 'express';
 import { createServer } from 'http';
 import helmet from 'helmet';
 import routes from './routes';
+import { addSocketIOMiddleware } from './middlewares/socketIo';
+import { Server } from 'socket.io';
+import sockets from './sockets';
 
 const whitelist = ['/'];
 
@@ -29,8 +32,19 @@ if (env === 'development') {
 
 app.disable('x-powered-by');
 
-routes(app);
-
-createServer(app).listen({ port }, () => {
+const server = createServer(app).listen({ port }, () => {
   console.log(`Server started at port ${port}`);
 });
+
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+sockets(io);
+
+app.use(addSocketIOMiddleware(io));
+
+routes(app);

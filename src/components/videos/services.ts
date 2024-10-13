@@ -1,54 +1,16 @@
-import { chromium } from 'playwright';
+import { ISearchVideo } from '../../interfaces/video';
 
 const VideosService = () => {
   const search = async (q: string) => {
-    const browser = await chromium.launch({
-      headless: true,
-    });
+    const YouTube = require('youtube-search-api');
 
-    const page = await browser.newPage();
+    const res = await YouTube.GetListByKeyword(q, false, 10);
 
-    await page.goto(`https://www.youtube.com/results?search_query=${q}`);
-    const data = (
-      await page.$$eval('ytd-video-renderer', results =>
-        results.map(el => {
-          const poster = el
-            .querySelector('#dismissible')
-            .querySelector('ytd-thumbnail')
-            .querySelector('a')
-            .querySelector('yt-image')
-            .querySelector('img')
-            .getAttribute('src');
-
-          if (!poster) return null;
-
-          const title = el
-            .querySelector('div')
-            .querySelector('#meta')
-            .querySelector('#title-wrapper')
-            .querySelector('h3')
-            .querySelector('a')
-            .text.trim();
-
-          const url =
-            'https://www.youtube.com/embed/' +
-            el
-              .querySelector('div')
-              .querySelector('#meta')
-              .querySelector('#title-wrapper')
-              .querySelector('h3')
-              .querySelector('a')
-              .getAttribute('href')
-              .match(/=(.*?)&/)[1];
-
-          return {
-            poster,
-            title,
-            url,
-          };
-        })
-      )
-    ).filter(item => item !== null);
+    const data: ISearchVideo[] = res.items.map((item: any) => ({
+      videoId: item.id,
+      title: item.title,
+      image: item.thumbnail?.thumbnails[0]?.url,
+    }));
 
     return data;
   };

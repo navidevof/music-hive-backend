@@ -11,9 +11,7 @@ const search = async (req: Request, res: Response) => {
       status: 200,
       error: false,
       message: 'Datos obtenidos',
-      body: {
-        results,
-      },
+      body: results,
     });
   } catch (error) {
     console.log({ error });
