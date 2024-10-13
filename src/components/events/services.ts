@@ -1,7 +1,7 @@
-import { db } from '@/firebase';
-import { IEvent } from '@/interfaces/event';
-import { IVideo } from '@/interfaces/video';
-import { COLLECTIONS } from '@/utils/constants';
+import { db } from '../../firebase';
+import { IEvent } from '../../interfaces/event';
+import { IVideo } from '../../interfaces/video';
+import { COLLECTIONS } from '../../utils/constants';
 
 const EventsServices = () => {
   const createEvent = async ({ name, uid, maxParticipants }: { uid: string; name: string; maxParticipants: number }) => {
