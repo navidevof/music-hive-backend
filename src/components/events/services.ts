@@ -5,17 +5,14 @@ import { COLLECTIONS } from '../../utils/constants';
 
 const EventsServices = () => {
   const createEvent = async ({ name, uid, maxParticipants }: { uid: string; name: string; maxParticipants: number }) => {
+    const batch = db.batch();
     const docRef = db.collection(COLLECTIONS.EVENTS).doc();
     const now = Date.now();
 
-    await docRef.set({
-      eventId: docRef.id,
-      name,
-      createdAt: now,
-      uid,
-      participants: 0,
-      maxParticipants,
-    });
+    batch.set(docRef, { eventId: docRef.id, name, createdAt: now, uid, maxParticipants });
+    batch.set(docRef.collection(COLLECTIONS.PLAYLISTS).doc(COLLECTIONS.PLAYLISTS_FIELD), { videos: [] });
+
+    await batch.commit();
 
     return docRef.id;
   };
@@ -31,10 +28,14 @@ const EventsServices = () => {
       .collection(COLLECTIONS.EVENTS)
       .doc(eventId)
       .collection(COLLECTIONS.PLAYLISTS)
-      .orderBy('createdAt', 'asc')
+      .doc(COLLECTIONS.PLAYLISTS_FIELD)
       .get();
 
-    return playlist.docs.map(doc => doc.data() as IVideo);
+    if (!playlist.exists) {
+      return [];
+    }
+
+    return playlist.data().videos as IVideo[];
   };
 
   const removeEvent = async ({ eventId }: { eventId: string }) => {
