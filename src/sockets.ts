@@ -9,9 +9,14 @@ const sockets = (io: Server) => {
       console.log(`Socket ${socket.id} se unió al evento ${eventId}`);
       const participants = io.sockets.adapter.rooms.get(eventId)?.size ?? 1;
       io.in(eventId).emit('participants', participants);
+      io.to(eventId).emit('joinEvent', socket.id);
     });
 
-    socket.on('updateCurrentVideo', ({ eventId, videoId }: { eventId: string; videoId: string }) => {
+    socket.on('updateCurrentVideo', ({ eventId, videoId, socketId }: { eventId: string; videoId: string; socketId?: string }) => {
+      if (socketId) {
+        socket.to(socketId).emit('updateCurrentVideo', videoId);
+        return;
+      }
       socket.to(eventId).emit('updateCurrentVideo', videoId);
     });
 
